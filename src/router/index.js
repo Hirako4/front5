@@ -1,11 +1,14 @@
+// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
+
+// Основные страницы
 import HomeView from '../views/HomeView.vue'
 import DemosView from '../views/DemosView.vue'
 import UserProfile from '../views/UserProfile.vue'
 import UserSettings from '../views/UserSettings.vue'
 import PaletteGenerator from '../views/PaletteGenerator.vue'
 
-// Импортируем компоненты профиля
+// Вложенные компоненты профиля
 import ProfileInfo from '../views/profile/ProfileInfo.vue'
 import ProfilePosts from '../views/profile/ProfilePosts.vue'
 import ProfileFriends from '../views/profile/ProfileFriends.vue'
@@ -24,22 +27,23 @@ const router = createRouter({
                                 component: DemosView
                               },
                               {
-                                /*
-                                 *       ВАЖНО: Добавили (\\d+)?
-                                 *       Это значит: "ID может быть только числом".
-                                 *       Теперь слова "info" или "posts" не будут считаться ID пользователя.
-                                 */
-                                path: '/profile/:id(\\d+)?',
-                            component: UserProfile,
-                            props: true,
+                                path: '/profile/:id?',
+                                component: UserProfile,
+                                props: (route) => ({ id: route.params.id || null }),
                             children: [
                               {
                                 path: '',
-                                // Улучшенная логика перенаправления: если ID нет, ведем на /profile/info без лишних слешей
-                                redirect: to => {
-                                  return to.params.id
-                                  ? `/profile/${to.params.id}/info`
-                                  : '/profile/info'
+                                component: {
+                                  template: `
+                                  <div class="default-content card-box">
+                                  <h3>Обо мне</h3>
+                                  <p>Привет! Я увлекаюсь веб-разработкой, люблю Vue.js и решать сложные задачи. В свободное время занимаюсь восстановлением старых автомобилей.</p>
+                                  <div class="tech-stack">
+                                  <span>Vue 3</span><span>Go</span><span>Docker</span><span>Linux</span>
+                                  </div>
+                                  </div>
+                                  `,
+                                  name: 'ProfileDefault'
                                 }
                               },
                               { path: 'info', component: ProfileInfo },
